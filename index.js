@@ -29,10 +29,10 @@ async function invokeAction({ action, id, name, email, phone }) {
 
     case "add":
       const addedContact = await contacts.addContact(
-        (id = nanoid()),
         name,
         email,
-        phone
+        phone,
+        (id = nanoid())
       );
       console.log(`The following contact was added:`, addedContact);
       break;
