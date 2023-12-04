@@ -34,6 +34,7 @@ async function removeContact(contactId) {
     );
     if (contactToDelete !== -1) {
       const deletedContact = contacts.splice(contactToDelete, 1);
+      await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
       return deletedContact;
     } else {
       return null;
@@ -51,7 +52,7 @@ async function addContact(name, email, phone) {
       (contact) => contact.name.toLowerCase() === name.toLowerCase()
     )
   ) {
-    return console.log("Contact already exists");
+    return { message: "Contact exists" };
   } else {
     const contact = {
       name,
@@ -61,7 +62,7 @@ async function addContact(name, email, phone) {
     };
 
     contacts.push(contact);
-
+    await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
     return contact;
   }
 }
