@@ -4,43 +4,34 @@ const path = require("path");
 
 const contactsPath = path.join(__dirname, "db", "contacts.json");
 
+const contactsService = (contacts) =>
+  fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+
 // TODO: задокументувати кожну функцію
 async function listContacts() {
-  try {
-    const buffer = await fs.readFile(contactsPath);
-    const data = JSON.parse(buffer);
-    return data;
-  } catch (error) {
-    throw error;
-  }
+  const buffer = await fs.readFile(contactsPath);
+  const data = JSON.parse(buffer);
+  return data;
 }
 
 async function getContactById(contactId) {
-  try {
-    const contacts = await listContacts();
-    return contacts.find((contact) => contactId === contact.id) || null;
-  } catch (error) {
-    throw error;
-  }
+  const contacts = await listContacts();
+  return contacts.find((contact) => contactId === contact.id) || null;
   // ...твій код. Повертає об'єкт контакту з таким id. Повертає null, якщо контакт з таким id не знайдений.
 }
 
 async function removeContact(contactId) {
-  try {
-    const contacts = await listContacts();
+  const contacts = await listContacts();
 
-    const contactToDelete = contacts.findIndex(
-      (contact) => contactId === contact.id
-    );
-    if (contactToDelete !== -1) {
-      const deletedContact = contacts.splice(contactToDelete, 1);
-      await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-      return deletedContact;
-    } else {
-      return null;
-    }
-  } catch (error) {
-    throw error;
+  const contactToDelete = contacts.findIndex(
+    (contact) => contactId === contact.id
+  );
+  if (contactToDelete !== -1) {
+    const deletedContact = contacts.splice(contactToDelete, 1);
+    await contactsService(contacts);
+    return deletedContact;
+  } else {
+    return null;
   }
   // ...твій код. Повертає об'єкт видаленого контакту. Повертає null, якщо контакт з таким id не знайдений.
 }
@@ -62,7 +53,7 @@ async function addContact(name, email, phone) {
     };
 
     contacts.push(contact);
-    await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+    await contactsService(contacts);
     return contact;
   }
 }
